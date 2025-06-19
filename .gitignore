@@ -1,0 +1,50 @@
+# Dataset
+*.npy
+*.zip
+*.mat
+
+# Model
+*.pkl
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Python virtual environments
+venv/
+env/
+
+# IDE or Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and temporary files
+*.log
+*.bak
+*.tmp
+
+# Compiled object files
+*.o
+*.a
+*.so
+*.dll
+
+# Distribution files
+*.tar.gz
+*.zip
+*.egg
+*.whl
+
+# Testing files 
+*_test.py
+test/*
