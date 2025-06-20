@@ -11,6 +11,9 @@ class VideoProcessor:
         self.holistic = self.mp_holistic.Holistic(
             static_image_mode=True,         # 选择静态识别，提高识别成功的概率
             model_complexity=2,             # 选择复杂度最高的模型
+            smooth_landmarks=True,          # 平滑关键点，减少噪声
+            enable_segmentation=True,       # 背景分割，适用于清晰分离手部
+            refine_face_landmarks=False,    # 手部识别不需要人脸精细化处理
             min_detection_confidence=0.1,   # 模型置性度
             min_tracking_confidence=0.3     # 由于静态识别模式选择为True，该功能已经失效
         )

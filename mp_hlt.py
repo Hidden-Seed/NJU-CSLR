@@ -19,7 +19,9 @@ def get_file_index(index, filename):
 
 
 def create_log(config):
-    logger = Logger(config["log_dir"], config["log_name"])
+    data_range = options.data_range
+    log_name = f"{data_range[0]}_{data_range[1]}_{config['log_name']}"
+    logger = Logger(config["log_dir"], log_name)
     logger.info(config)
 
     return logger
@@ -87,8 +89,7 @@ if __name__ == "__main__":
                 process_one(vp, f"{index:03d}", file, invalid_file, logger)
                 update_record_file(record_file_path, file_index)
             else:
-                logger.info(
-                    f"Skipping {file} (already processed or invalid file).")
+                logger.info(f"Skipping {file} (already processed or invalid file).")
 
     logger.info("All videos have been processed!")
 
@@ -109,6 +110,8 @@ if __name__ == "__main__":
 
     if valid_flag:
         logger.info("All txt files checking passed!")
+    else:
+        logger.warning("Txt files checking failed!")
 
     total_num = (end_index - start_index) * 250
     valid_rate = 1 - len(invalid_list) / total_num
