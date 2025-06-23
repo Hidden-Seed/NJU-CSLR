@@ -22,7 +22,7 @@ def read_config(options):
     # Standardize file name
     keyframe_num = data_config.getint(data_config_type, 'keyframe_num')
     enable_3D = data_config.getboolean(data_config_type, '3D_enable')
-    enable_body = data_config.getboolean(data_config_type, 'body_enable')
+    enable_body = data_config.getboolean(data_config_type, 'pose_enable')
     node_num, dimension_num = 42, 2
     if enable_body:
         node_num = 46
