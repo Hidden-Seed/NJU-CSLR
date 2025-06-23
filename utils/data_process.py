@@ -14,7 +14,11 @@ def txt2mat(txt_file_path, mat_path, logger: Logger):
     """
 
     # Read txt as flat array
-    data = np.loadtxt(txt_file_path).reshape(-1, 138)
+    data = np.loadtxt(txt_file_path)
+    if data.size == 0:
+        data = np.empty((0, 138))
+    else:
+        data = data.reshape(-1, 138)
 
     # Save to .mat
     scio.savemat(mat_path, {'data': data})
