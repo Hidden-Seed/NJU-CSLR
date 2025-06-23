@@ -42,9 +42,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     unique_labels = np.unique(label_array)
-    print(unique_labels)
-    print(data_array.shape[0])
-    exit()
     train_data, valid_data, test_data = [], [], []
 
     for label in unique_labels:
