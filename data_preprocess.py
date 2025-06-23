@@ -28,8 +28,8 @@ if __name__ == "__main__":
     # Processing config
     crop_size = float(config["data"]["crop_size"])
     keyframe_num = int(config["data"]["keyframe_num"])
-    enable_3D = bool(config["data"]["3D_enable"])
-    enable_body = bool(config["data"]["pose_enable"])
+    enable_3D = config["data"].getboolean("3D_enable")
+    enable_body = config["data"].getboolean("pose_enable")
     index_range, need_index = 42, []
 
     if enable_body:
@@ -42,6 +42,7 @@ if __name__ == "__main__":
             need_index.extend([i * 3, i * 3 + 1])
 
     data, label = [], []
+    invalid_num = 0
 
     for index in tqdm(range(0, 500), desc="Processing labels", colour="green"):
         label_idx = "%03d" % index
@@ -57,16 +58,28 @@ if __name__ == "__main__":
             ok, key_frames = read_mat_file(
                 mat_file_path, keyframe_num, label_idx, mat_file)
             if not ok:
+                invalid_num += 1
                 continue
 
             # Flat append
-            label_data.append(key_frames)
+            data.append(key_frames)
             label.append(index)
 
         # label_data_array = np.array(label_data, dtype=np.float32)
         # data.append(label_data_array)
         # cur_label = int(index)
         # label.append(np.ones(len(label_data)) * cur_label)
+
+    invalid_file_path = os.path.join(
+        config["mp"]["save_path"], config["mp"]["invalid_file"])
+
+    with open(invalid_file_path, 'r') as f:
+        lines = [line for line in f if line.strip()]
+        line_count = len(lines)
+
+    if invalid_num != line_count:
+        logger.error(
+            f"Invalid num check failed! Expected {invalid_num}, but found {line_count} non-empty lines.")
 
     # Extract the required keypoint data of need_index
     print("Cutting data...")
