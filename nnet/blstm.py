@@ -28,9 +28,9 @@ class blstm(nn.Module):
         # h_s和h_c表示每一个隐层的上一时间点输出值和输入细胞状态
         # h_s和h_c的格式均是(num_layers * num_directions, batch, HIDDEN_SIZE)
         # 如果是双向LSTM，num_directions是2，单向是1
-        # out = self.output(r_out)
+        out = self.output(r_out)
         # out_prob = F.softmax(out, dim=1)
 
-        pooled = torch.mean(r_out, dim=1)  # (B, 2*HIDDEN)
-        out = self.output(pooled)  # (B, OUTPUT)
+        # pooled = torch.mean(r_out, dim=1)  # (B, 2*HIDDEN)
+        # out = self.output(pooled)  # (B, OUTPUT)
         return out

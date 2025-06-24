@@ -48,7 +48,7 @@ do
     echo "Running iteration $i"
 
     # python data_split_shuffle.py
-    torchrun --nproc_per_node=1 --nnodes=1 --rdzv_backend=c10d --max_restarts=3 train.py --train_iteration=$i
+    torchrun --nproc_per_node=3 --nnodes=1 --rdzv_backend=c10d --max_restarts=3 train.py --train_iteration=$i
 
     echo "Iteration $i completed."
 done

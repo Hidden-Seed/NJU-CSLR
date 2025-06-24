@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+from datetime import datetime
 
 import torch
 import torch.nn as nn
@@ -15,8 +16,9 @@ from utils.logger import *
 from utils.config.train_config import *
 
 
-def create_logger(config):
-    logger = Logger(config["data"]["log_dir"], config["data"]["log_name"])
+def create_logger(config, time_str):
+    log_name = time_str + config["model"]["log_name"]
+    logger = Logger(config["model"]["log_dir"], log_name)
     logger.info(config["model"])
     logger.info(config["data"])
 
@@ -25,8 +27,10 @@ def create_logger(config):
 
 def create_dataloader(data_path, label_path, data_class):
     # Read the data and convert to a Tensor
-    np_data_x = np.load(data_path, allow_pickle=True)
-    np_data_y = np.load(label_path, allow_pickle=True)
+    # np_data_x = np.load(data_path, allow_pickle=True)
+    # np_data_y = np.load(label_path, allow_pickle=True)
+    np_data_x = np.load(data_path)
+    np_data_y = np.load(label_path)
     data_x = torch.from_numpy(np_data_x)
     data_y = torch.from_numpy(np_data_y)
 
@@ -88,9 +92,11 @@ if __name__ == "__main__":
     # Set the device for this process to the corresponding GPU
     torch.cuda.set_device(local_rank)
 
+    time_str = datetime.now().strftime("%Y%m%d_%H%M")
+
     options = create_parser()
     config = read_config(options)
-    logger = create_logger(config)
+    logger = create_logger(config, time_str)
 
     # Model config
     time_step = int(config["model"]["TIME_STEP"])
@@ -108,7 +114,11 @@ if __name__ == "__main__":
     model_save_dir = config["data"]["model_save_dir"]
     os.makedirs(model_save_dir, exist_ok=True)
     iteration = options.train_iteration
-    model_save_name = f"{options.model_type}_output{output_size}_input{time_step}x{input_size}_{iteration}.pkl"
+    model_save_name = (
+        f"{options.model_type}_output{output_size}_"
+        f"input{time_step}x{input_size}_"
+        f"{time_str}_{iteration}.pkl"
+    )
 
     train_loader, valid_loader, test_loader = data_split(config, logger)
 
