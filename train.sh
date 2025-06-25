@@ -1,10 +1,5 @@
 #!/bin/bash
 
-echo "" > ./log/CSLR.log
-
-DATA_PATH="./dataset/CSLR_K36_data.npy"
-LABEL_PATH="./dataset/CSLR_K36_label.npy"
-
 # if [ ! -f "$DATA_PATH" ] || [ ! -f "$LABEL_PATH" ]; then
 #     python data_preprocess.py
 # fi
