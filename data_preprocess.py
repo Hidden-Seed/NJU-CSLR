@@ -88,9 +88,9 @@ if __name__ == "__main__":
     data_array = data_array[:, :, need_index]
     label_array = np.array(label, dtype=np.int16).reshape(-1, 1)
 
-    for i in tqdm(range(len(data_array)), desc="Converting to relative coordinates", colour="green"):
-        for j in range(len(data_array[i])):
-            data_array[i][j] = abs2rel(data_array[i][j], enable_3D, crop_size)
+    # for i in tqdm(range(len(data_array)), desc="Converting to relative coordinates", colour="green"):
+    #     for j in range(len(data_array[i])):
+    #         data_array[i][j] = abs2rel(data_array[i][j], enable_3D, crop_size)
 
     # Save the processed dataset
     data_npy_name = config["data"]["data_file_name"]

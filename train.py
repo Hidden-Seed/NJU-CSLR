@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import numpy as np
 from datetime import datetime
 
@@ -12,6 +13,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 from nnet.blstm import blstm
+from nnet.lstm import lstm
 from utils.logger import *
 from utils.config.train_config import *
 
@@ -85,6 +87,44 @@ def data_split(config, logger):
     return train_loader, valid_loader, test_loader
 
 
+def record_model(config):
+    record_file_path = os.path.join(
+        config["data"]["model_save_dir"], config["model"]["info_name"])
+
+    # 如果文件存在，先加载旧数据；否则创建一个空字典
+    if os.path.exists(record_file_path):
+        with open(record_file_path, "r") as f:
+            try:
+                all_models_info = json.load(f)
+            except json.JSONDecodeError:
+                all_models_info = {}
+    else:
+        all_models_info = {}
+
+    # 以模型名为 key，模型参数为 value
+    model_info = {
+        "input_size": input_size,
+        "hidden_size": hidden_size,
+        "output_size": output_size,
+        "batch_size": batch_size,
+        "epoch": epoch,
+        "initial_learning_rate": lr,
+        "time_step": time_step,
+        "drop_rate": drop_rate,
+        "layers": layers,
+        "cpu_nums": cpu_nums,
+        "test_accuracy": accuracy,
+    }
+
+    all_models_info[model_save_name] = model_info
+
+    # 保存更新后的 JSON
+    with open(record_file_path, "w") as f:
+        json.dump(all_models_info, f, indent=4)
+
+    logger.info(f"{model_save_name} info has been saved to {record_file_path}")
+
+
 if __name__ == "__main__":
     # NCCL is the fastest and most recommended backend on GPU devices
     dist.init_process_group(backend='nccl')
@@ -99,6 +139,7 @@ if __name__ == "__main__":
     logger = create_logger(config, time_str)
 
     # Model config
+    enable_bi = config["model"].getboolean("enable_bi")
     time_step = int(config["model"]["TIME_STEP"])
     input_size = int(config["model"]["INPUT_SIZE"])
     hidden_size = int(config["model"]["HIDDEN_SIZE"])
@@ -114,8 +155,12 @@ if __name__ == "__main__":
     model_save_dir = config["data"]["model_save_dir"]
     os.makedirs(model_save_dir, exist_ok=True)
     iteration = options.train_iteration
+    if enable_bi:
+        model_type = "blstm"
+    else:
+        model_type = "lstm"
     model_save_name = (
-        f"{options.model_type}_output{output_size}_"
+        f"{model_type}_output{output_size}_"
         f"input{time_step}x{input_size}_"
         f"{time_str}_{iteration}.pkl"
     )
@@ -126,8 +171,12 @@ if __name__ == "__main__":
     torch.manual_seed(int(config["model"]["SEED"]))
 
     # Create the model
-    model = blstm(input_size, hidden_size, output_size,
-                  layers, drop_rate).to(local_rank)
+    if enable_bi:
+        model = blstm(input_size, hidden_size, output_size,
+                      layers, drop_rate).to(local_rank)
+    else:
+        model = lstm(input_size, hidden_size, output_size,
+                     layers, drop_rate).to(local_rank)
     # Load the model before constructing the DDP model, and it only needs to be loaded on the master node.
     ckpt_path = None
     if dist.get_rank() == 0 and ckpt_path is not None:
@@ -247,3 +296,5 @@ if __name__ == "__main__":
     accuracy = float((ground_truth == final_predict).astype(
         int).sum()) / float(final_predict.size)
     logger.info("Test accuracy: " + str(accuracy))
+
+    record_model(config)

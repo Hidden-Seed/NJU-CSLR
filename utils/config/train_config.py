@@ -7,8 +7,6 @@ def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_config", type=str, default="config/model.cfg",
                         help="path to model definition file")
-    parser.add_argument("--model_type", type=str,
-                        default="blstm", help="used model type (lstm, blstm)")
     parser.add_argument("--data_config", type=str, default="config/dataset.cfg",
                         help="path to data config file")
     parser.add_argument("--checkpoint_interval", type=int, default=1,
@@ -48,7 +46,7 @@ def read_config(options):
     data_config[data_config_type]['data_file_name'] = data_file_name
     data_config[data_config_type]['label_file_name'] = label_file_name
 
-    model_config_type = options.model_type
+    model_config_type = "DEFAULT"
     model_config = configparser.ConfigParser()
     model_config.read(options.model_config)
 

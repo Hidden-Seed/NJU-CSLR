@@ -25,7 +25,7 @@ def create_parser():
 def read_config(options):
     """Read the model and demo config files"""
 
-    model_config_type = options.model_type
+    model_config_type = "DEFAULT"
     model_config = configparser.ConfigParser()
     model_config.read(options.model_config)
 
