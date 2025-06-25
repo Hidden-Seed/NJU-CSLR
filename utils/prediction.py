@@ -32,18 +32,6 @@ def load_checkpoint(filepath, device):
     return model
 
 
-def get_file_index(index, filename):
-    parts = filename.split('_')                              # 将文件名按 "_" 分割
-    first_number = int(parts[0][1:])
-    valid_number = (int(parts[1]) - 1) * 20 + int(parts[2])  # 计算 label_num
-    last_number = int(parts[3][:-1])
-    if (valid_number == index):
-        file_index = (first_number - 1) * 5 + last_number
-        return f"{index}_{file_index}"
-    else:
-        return None
-
-
 def get_data_label(filename):
     parts = filename.split('_')                            # 将文件名按 "_" 分割
     data_label = (int(parts[1]) - 1) * 20 + int(parts[2])  # 计算 label_num
@@ -52,7 +40,7 @@ def get_data_label(filename):
 
 def load_txt_data(txt_path, logger: Logger):
     if os.path.getsize(txt_path) == 0:
-        logger.warning("Invalid txt file!")
+        logger.warning(f"Invalid txt file: {txt_path}!")
         return None
 
     data = np.loadtxt(txt_path)

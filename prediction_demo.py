@@ -28,14 +28,6 @@ if __name__ == "__main__":
         raise FileNotFoundError("Can not find class dictionary.")
     class_dict = read_dict_table(dict_path)
 
-    # Load txt data
-    txt_data_file = "P12_01_01_0._color_skeleton.txt"
-    data_label = get_data_label(txt_data_file)
-
-    txt_data_path = os.path.join(
-        config["mp"]["save_path"], f"{data_label:03d}", txt_data_file)
-    data = load_txt_data(txt_data_path, logger)
-
     # Set GPU
     use_gpu = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_gpu else "cpu")
@@ -57,19 +49,42 @@ if __name__ == "__main__":
     model = load_checkpoint(model_save_path, device)
     model.to(device)
 
-    # Process data
-    data_array = process_txt_data(data, config)
-    # Convert to a Tensor.
-    data_tensor = (torch.from_numpy(
-        data_array).to(device).unsqueeze(0))
+    txt_data_dir = config["mp"]["save_path"]
+    total_num, success_num = (0, 0)
 
-    # Predict the result
-    pre_word = predict(data_tensor, model, class_dict, logger)
-    real_word = class_index2name(class_dict, data_label)
-    logger.info(f"Prediction result: {pre_word}")
-    logger.info(f"Correct word     : {real_word}")
+    for label in range(500):
+        txt_data_path = os.path.join(txt_data_dir, f"{label:03d}")
+        for txt_data_file in os.listdir(txt_data_path):
 
-    if pre_word == real_word:
-        logger.info("Predict successfully!")
-    else:
-        logger.warning("Prediction failed!")
+            # Load txt data
+            # txt_data_file = "P12_01_01_0._color_skeleton.txt"
+            # data_label = get_data_label(txt_data_file)
+
+            txt_data_file = os.path.join(txt_data_path, txt_data_file)
+            data = load_txt_data(txt_data_file, logger)
+            data_label = label
+            if data is None:
+                continue
+            else:
+                total_num += 1
+
+            # Process data
+            data_array = process_txt_data(data, config)
+            # Convert to a Tensor.
+            data_tensor = (torch.from_numpy(
+                data_array).to(device).unsqueeze(0))
+
+            # Predict the result
+            pre_word = predict(data_tensor, model, class_dict, logger)
+            real_word = class_index2name(class_dict, data_label)
+            logger.info(f"Prediction result: {pre_word}")
+            logger.info(f"Correct word     : {real_word}")
+
+            if pre_word == real_word:
+                logger.info("Predict successfully!")
+                success_num += 1
+            else:
+                logger.warning("Prediction failed!")
+
+    success_rate = success_num / total_num
+    logger.info(f"Rate of successful prediction: {success_rate:.2%}")
