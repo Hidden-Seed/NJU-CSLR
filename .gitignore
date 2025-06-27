@@ -5,6 +5,7 @@
 
 # Model
 *.pkl
+*.json
 
 # Python cache files
 __pycache__/

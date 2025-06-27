@@ -1,5 +1,5 @@
 {
-    "lstm_output500_input36x84_20250625_2231_0.pkl": {
+    "lstm_output500_input36x84_20250626_0007_0.pkl": {
         "input_size": 84,
         "hidden_size": 128,
         "output_size": 500,
@@ -10,9 +10,22 @@
         "drop_rate": 0.5,
         "layers": 2,
         "cpu_nums": 16,
-        "test_accuracy": 0.8178016726403823
+        "test_accuracy": 0.8195937873357229
     },
-    "blstm_output500_input36x84_20250625_2125_0.pkl": {
+    "blstm_output500_input36x84_20250626_0010_0.pkl": {
+        "input_size": 84,
+        "hidden_size": 128,
+        "output_size": 500,
+        "batch_size": 512,
+        "epoch": 120,
+        "initial_learning_rate": 0.001,
+        "time_step": 36,
+        "drop_rate": 0.5,
+        "layers": 2,
+        "cpu_nums": 16,
+        "test_accuracy": 0.8626045400238949
+    },
+    "lstm_output500_input36x84_20250626_0023_0.pkl": {
         "input_size": 84,
         "hidden_size": 256,
         "output_size": 500,
@@ -23,11 +36,11 @@
         "drop_rate": 0.5,
         "layers": 2,
         "cpu_nums": 16,
-        "test_accuracy": 0.9465352449223416
+        "test_accuracy": 0.8876941457586619
     },
-    "blstm_output500_input36x84_20250625_2138_0.pkl": {
+    "blstm_output500_input36x84_20250626_0031_0.pkl": {
         "input_size": 84,
-        "hidden_size": 512,
+        "hidden_size": 256,
         "output_size": 500,
         "batch_size": 512,
         "epoch": 120,
@@ -36,19 +49,6 @@
         "drop_rate": 0.5,
         "layers": 2,
         "cpu_nums": 16,
-        "test_accuracy": 0.9572879330943848
-    },
-    "lstm_output500_input36x84_20250625_2231_0.pkl": {
-        "input_size": 84,
-        "hidden_size": 128,
-        "output_size": 500,
-        "batch_size": 512,
-        "epoch": 120,
-        "initial_learning_rate": 0.001,
-        "time_step": 36,
-        "drop_rate": 0.5,
-        "layers": 2,
-        "cpu_nums": 16,
-        "test_accuracy": 0.8273596176821983
+        "test_accuracy": 0.9094982078853047
     }
 }

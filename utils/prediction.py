@@ -92,9 +92,9 @@ def process_txt_data(data, config):
         key_frames, dtype=np.float32).reshape(keyframe_num, 138)
     data_array = data_array[:, need_index]
 
-    crop_size = float(config["data"]["crop_size"])
-    for i in range(len(data_array)):
-        data_array[i] = abs2rel(data_array[i], enable_3D, crop_size)
+    # crop_size = float(config["data"]["crop_size"])
+    # for i in range(len(data_array)):
+    #     data_array[i] = abs2rel(data_array[i], enable_3D, crop_size)
 
     return data_array
 

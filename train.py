@@ -87,17 +87,16 @@ def data_split(config, logger):
     return train_loader, valid_loader, test_loader
 
 
-def record_model(config):
+def record_model(config, input_size, hidden_size, output_size,
+                 batch_size, epoch, lr, time_step, drop_rate, layers,
+                 cpu_nums, accuracy, model_save_name):
     record_file_path = os.path.join(
         config["data"]["model_save_dir"], config["model"]["info_name"])
 
     # 如果文件存在，先加载旧数据；否则创建一个空字典
     if os.path.exists(record_file_path):
         with open(record_file_path, "r") as f:
-            try:
-                all_models_info = json.load(f)
-            except json.JSONDecodeError:
-                all_models_info = {}
+            all_models_info = json.load(f)
     else:
         all_models_info = {}
 
@@ -120,6 +119,7 @@ def record_model(config):
 
     # 保存更新后的 JSON
     with open(record_file_path, "w") as f:
+        f.truncate(0)
         json.dump(all_models_info, f, indent=4)
 
     logger.info(f"{model_save_name} info has been saved to {record_file_path}")
@@ -295,6 +295,8 @@ if __name__ == "__main__":
 
     accuracy = float((ground_truth == final_predict).astype(
         int).sum()) / float(final_predict.size)
-    logger.info("Test accuracy: " + str(accuracy))
+    logger.info(f"Test accuracy: {accuracy}")
 
-    record_model(config)
+    record_model(config, input_size, hidden_size, output_size,
+                 batch_size, epoch, lr, time_step, drop_rate, layers,
+                 cpu_nums, accuracy, model_save_name)
