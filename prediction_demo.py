@@ -52,7 +52,7 @@ if __name__ == "__main__":
     txt_data_dir = config["mp"]["save_path"]
     total_num, success_num = (0, 0)
 
-    for label in range(10):
+    for label in range(500):
         txt_data_path = os.path.join(txt_data_dir, f"{label:03d}")
         for txt_data_file in os.listdir(txt_data_path):
 

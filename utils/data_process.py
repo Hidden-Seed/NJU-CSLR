@@ -95,7 +95,10 @@ def extract_keyframes_indexes(frames, keyframe_num):
     new_frames.sort(key=operator.attrgetter("diff"), reverse=True)
     for keyframe in new_frames[:keyframe_num]:
         keyframe_id_set.add(keyframe.id)
-    return list(keyframe_id_set)
+
+    key_indexes = list(keyframe_id_set)
+    key_indexes.sort()
+    return key_indexes
 
 
 def read_mat_file(mat_path, keyframe_num, label_idx, mat_file):

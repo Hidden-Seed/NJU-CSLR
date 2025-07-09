@@ -50,5 +50,57 @@
         "layers": 2,
         "cpu_nums": 16,
         "test_accuracy": 0.9094982078853047
+    },
+    "blstm_output500_input60x84_20250703_2151_0.pkl": {
+        "input_size": 84,
+        "hidden_size": 128,
+        "output_size": 500,
+        "batch_size": 512,
+        "epoch": 120,
+        "initial_learning_rate": 0.001,
+        "time_step": 60,
+        "drop_rate": 0.5,
+        "layers": 2,
+        "cpu_nums": 16,
+        "test_accuracy": 0.8897849462365591
+    },
+    "blstm_output500_input60x84_20250703_2159_0.pkl": {
+        "input_size": 84,
+        "hidden_size": 256,
+        "output_size": 500,
+        "batch_size": 512,
+        "epoch": 120,
+        "initial_learning_rate": 0.001,
+        "time_step": 60,
+        "drop_rate": 0.5,
+        "layers": 2,
+        "cpu_nums": 16,
+        "test_accuracy": 0.9283154121863799
+    },
+    "blstm_output500_input36x84_20250707_1957_0.pkl": {
+        "input_size": 84,
+        "hidden_size": 128,
+        "output_size": 500,
+        "batch_size": 512,
+        "epoch": 120,
+        "initial_learning_rate": 0.001,
+        "time_step": 36,
+        "drop_rate": 0.5,
+        "layers": 2,
+        "cpu_nums": 16,
+        "test_accuracy": 0.8649940262843488
+    },
+    "blstm_output500_input36x84_20250707_2051_0.pkl": {
+        "input_size": 84,
+        "hidden_size": 128,
+        "output_size": 500,
+        "batch_size": 512,
+        "epoch": 120,
+        "initial_learning_rate": 0.001,
+        "time_step": 36,
+        "drop_rate": 0.5,
+        "layers": 2,
+        "cpu_nums": 16,
+        "test_accuracy": 0.8626045400238949
     }
 }
