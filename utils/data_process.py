@@ -139,6 +139,13 @@ def read_mat_file(mat_path, keyframe_num, label_idx, mat_file):
         return True, key_frames
 
 
+# 数据镜像
+def data_mirror(data):
+    x_indices = np.arange(0, data.shape[2], 2)
+    data[:, :, x_indices] = 1.0 - data[:, :, x_indices]
+    return data
+
+
 # 绝对坐标转化为相对坐标
 def abs2rel(data, enable_3D, crop_size):
     if enable_3D:

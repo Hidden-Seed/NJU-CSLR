@@ -86,6 +86,8 @@ if __name__ == "__main__":
     data_array = np.array(
         data, dtype=np.float32).reshape(-1, keyframe_num, 138)
     data_array = data_array[:, :, need_index]
+    data_array = data_mirror(data_array)
+
     label_array = np.array(label, dtype=np.int16).reshape(-1, 1)
 
     # for i in tqdm(range(len(data_array)), desc="Converting to relative coordinates", colour="green"):

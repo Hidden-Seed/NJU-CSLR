@@ -1,7 +1,9 @@
 # Dataset
+dataset/*
 *.npy
 *.zip
 *.mat
+!dictionary.txt
 
 # Model
 *.pkl

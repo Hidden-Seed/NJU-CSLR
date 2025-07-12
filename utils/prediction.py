@@ -91,6 +91,8 @@ def process_txt_data(data, config):
     data_array = np.array(
         key_frames, dtype=np.float32).reshape(keyframe_num, 138)
     data_array = data_array[:, need_index]
+    x_indices = np.arange(0, data_array.shape[1], 2)
+    data_array[:, x_indices] = 1.0 - data_array[:, x_indices]
 
     # crop_size = float(config["data"]["crop_size"])
     # for i in range(len(data_array)):

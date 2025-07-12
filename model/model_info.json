@@ -102,5 +102,18 @@
         "layers": 2,
         "cpu_nums": 16,
         "test_accuracy": 0.8626045400238949
+    },
+    "blstm_output500_input36x84_20250712_1733_0.pkl": {
+        "input_size": 84,
+        "hidden_size": 128,
+        "output_size": 500,
+        "batch_size": 512,
+        "epoch": 120,
+        "initial_learning_rate": 0.001,
+        "time_step": 36,
+        "drop_rate": 0.5,
+        "layers": 2,
+        "cpu_nums": 16,
+        "test_accuracy": 0.8826164874551972
     }
 }
