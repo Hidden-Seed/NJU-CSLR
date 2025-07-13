@@ -4,6 +4,7 @@
 #     python data_preprocess.py
 # fi
 
+python data_preprocess.py
 
 REPEAT_TIMES=1
 
@@ -42,7 +43,7 @@ for ((i=0; i<REPEAT_TIMES; i++))
 do
     echo "Running iteration $i"
 
-    # python data_split_shuffle.py
+    python data_split_shuffle.py
     torchrun --nproc_per_node=3 --nnodes=1 --rdzv_backend=c10d --max_restarts=3 train.py --train_iteration=$i
 
     echo "Iteration $i completed."

@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     # Model config
     enable_bi = config["model"].getboolean("enable_bi")
-    time_step = int(config["model"]["TIME_STEP"])
+    time_step = int(config["data"]["keyframe_num"])
     input_size = int(config["model"]["INPUT_SIZE"])
     hidden_size = int(config["model"]["HIDDEN_SIZE"])
     output_size = int(config["model"]["OUTPUT_SIZE"])

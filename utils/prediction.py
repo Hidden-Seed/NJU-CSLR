@@ -1,8 +1,10 @@
 import os
+import json
 import numpy as np
 
 import torch
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
 
 from utils.data_process import *
 from utils.logger import Logger
@@ -51,21 +53,32 @@ def load_txt_data(txt_path, logger: Logger):
     return data.astype(np.float32)
 
 
-def process_txt_data(data, config):
-    enable_3D = config["data"].getboolean("3D_enable")
-    enable_body = config["data"].getboolean("pose_enable")
-    index_range, need_index = 42, []
+def get_model_info(info_file, model_name):
+    with open(info_file, "r") as f:
+        model_info = json.load(f)
 
-    if enable_body:
+    return model_info[model_name]
+
+
+def process_txt_data(data, config_demo):
+    info_file = config_demo["model_info"]
+    model_name = os.path.basename(config_demo["model_path"])
+    model_info = get_model_info(info_file, model_name)
+
+    input_size = model_info["input_size"]
+    keyframe_num = model_info["time_step"]
+
+    index_range, need_index = 42, []
+    if input_size % 46 == 0:  # enable_body
         index_range += 4
-    if enable_3D:
+
+    if input_size >= 126:
         for i in range(index_range):
             need_index.extend([i * 3, i * 3 + 1, i * 3 + 2])
     else:
         for i in range(index_range):
             need_index.extend([i * 3, i * 3 + 1])
 
-    keyframe_num = int(config["data"]["keyframe_num"])
     key_indexes = extract_keyframes_indexes(data, keyframe_num)
 
     if len(key_indexes) < keyframe_num:
@@ -91,8 +104,9 @@ def process_txt_data(data, config):
     data_array = np.array(
         key_frames, dtype=np.float32).reshape(keyframe_num, 138)
     data_array = data_array[:, need_index]
-    x_indices = np.arange(0, data_array.shape[1], 2)
-    data_array[:, x_indices] = 1.0 - data_array[:, x_indices]
+
+    # x_indices = np.arange(0, data_array.shape[1], 2)
+    # data_array[:, x_indices] = 1.0 - data_array[:, x_indices]
 
     # crop_size = float(config["data"]["crop_size"])
     # for i in range(len(data_array)):
@@ -115,9 +129,38 @@ def predict(data_tensor, model, dict_table, logger: Logger):
         pre_class = pre_result[1].cpu().data.numpy().tolist()[0]
         pre_prob = pre_result[0].cpu().data.numpy().tolist()[0]
 
-    word = class_index2name(dict_table, pre_class)
-
     if pre_prob < 0.8:
         logger.warning(f"Prediction confidence too low: {pre_prob}")
 
-    return word
+    return pre_class
+
+
+def create_dataloader(config_demo):
+    data_path = config_demo["data_path"]
+    label_path = config_demo["label_path"]
+
+    # Read the data and convert to a Tensor
+    np_data_x = np.load(data_path)
+    np_data_y = np.load(label_path)
+    data_x = torch.from_numpy(np_data_x)
+    data_y = torch.from_numpy(np_data_y)
+
+    # Model config
+    info_file = config_demo["model_info"]
+    model_name = os.path.basename(config_demo["model_path"])
+    model_info = get_model_info(info_file, model_name)
+
+    input_size = model_info["input_size"]
+    time_step = model_info["time_step"]
+    cpu_nums = model_info["cpu_nums"]
+    batch_size = model_info["batch_size"]
+
+    # Outermost layer is a list, second layer is a tuple, innermost layers are ndarrays.
+    data = list(data_x.numpy().reshape(1, -1, time_step, input_size))
+    data.append(list(data_y.numpy().reshape(-1, 1)))
+    data = list(zip(*data))
+
+    # Create dataLoader
+    dataloader = DataLoader(data, batch_size=batch_size,
+                            num_workers=cpu_nums, pin_memory=True)
+    return dataloader

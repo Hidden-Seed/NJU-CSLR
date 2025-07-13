@@ -4,23 +4,9 @@ import torch
 
 from utils.data_process import *
 from utils.prediction import *
-from utils.logger import Logger
-from utils.config.pre_config import *
 
 
-def create_log(config):
-    logger = logger = Logger(
-        config["demo"]["log_dir"], config["demo"]["log_name"])
-    logger.info(config)
-
-    return logger
-
-
-if __name__ == "__main__":
-    options = create_parser()
-    config = read_config(options)
-    logger = create_log(config)
-
+def main_demo_0(config, logger):
     # Read dict
     dict_path = config["demo"]["dictionary_path"]
     if not os.path.exists(dict_path):
@@ -35,14 +21,7 @@ if __name__ == "__main__":
     logger.info(torch.cuda.get_device_name(0))
 
     # Set random seed
-    torch.manual_seed(int(config["model"]["SEED"]))
-
-    # Model config
-    batch_size = int(config["model"]["BATCH_SIZE"])
-    cpu_nums = int(config["model"]["CPU_NUMS"])
-    time_step = int(config["model"]["TIME_STEP"])
-    input_size = int(config["model"]["INPUT_SIZE"])
-    output_size = int(config["model"]["OUTPUT_SIZE"])
+    torch.manual_seed(0)
 
     # Load model
     model_save_path = config["demo"]["model_path"]
@@ -52,7 +31,7 @@ if __name__ == "__main__":
     txt_data_dir = config["mp"]["save_path"]
     total_num, success_num = (0, 0)
 
-    for label in range(0, 500):
+    for label in range(1):
         txt_data_path = os.path.join(txt_data_dir, f"{label:03d}")
         for txt_data_file in os.listdir(txt_data_path):
 
@@ -62,25 +41,26 @@ if __name__ == "__main__":
 
             txt_data_file = os.path.join(txt_data_path, txt_data_file)
             data = load_txt_data(txt_data_file, logger)
-            data_label = label
             if data is None:
                 continue
             else:
                 total_num += 1
 
             # Process data
-            data_array = process_txt_data(data, config)
+            data_array = process_txt_data(data, config["demo"])
             # Convert to a Tensor.
             data_tensor = (torch.from_numpy(
                 data_array).to(device).unsqueeze(0))
 
             # Predict the result
-            pre_word = predict(data_tensor, model, class_dict, logger)
-            real_word = class_index2name(class_dict, data_label)
+            pre_class = predict(data_tensor, model, class_dict, logger)
+
+            pre_word = class_index2name(class_dict, pre_class)
+            real_word = class_index2name(class_dict, label)
             logger.info(f"Prediction result: {pre_word}")
             logger.info(f"Correct word     : {real_word}")
 
-            if pre_word == real_word:
+            if pre_class == label:
                 logger.info("Predict successfully!")
                 success_num += 1
             else:
