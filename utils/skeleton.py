@@ -337,29 +337,41 @@ def process_video(video_processor: VideoProcessor, video_path, output_file, inva
     num_left = get_max_consecutive_length(missing_left_hand_indices)
     num_right = get_max_consecutive_length(missing_right_hand_indices)
 
-    if num_left <= 10 and num_right <= 10 and missing_hands_count <= 50:
-        # 保存骨骼数据到 .txt 文件，格式化输出
-        with open(output_file, "w") as f:
-            for frame in all_frames:
-                # 只保存左手、右手、肩部坐标，不包含其他信息
-                all_landmarks = frame.left_hand_3d + frame.right_hand_3d + frame.shoulders_3d
-                if all_landmarks:
-                    for lm in all_landmarks:
-                        # 写入每个关键点的 x, y, z 坐标，保留10位小数，按照空格分隔
-                        f.write(f"{lm[0]:.10f} {lm[1]:.10f} {lm[2]:.10f} ")
+    # if num_left <= 10 and num_right <= 10 and missing_hands_count <= 50:
+    #     # 保存骨骼数据到 .txt 文件，格式化输出
+    #     with open(output_file, "w") as f:
+    #         for frame in all_frames:
+    #             # 只保存左手、右手、肩部坐标，不包含其他信息
+    #             all_landmarks = frame.left_hand_3d + frame.right_hand_3d + frame.shoulders_3d
+    #             if all_landmarks:
+    #                 for lm in all_landmarks:
+    #                     # 写入每个关键点的 x, y, z 坐标，保留10位小数，按照空格分隔
+    #                     f.write(f"{lm[0]:.10f} {lm[1]:.10f} {lm[2]:.10f} ")
 
-                    # 每一帧按换行符分割
-                    f.write("\n")
+    #                 # 每一帧按换行符分割
+    #                 f.write("\n")
 
-        logger.info(
-            f"{video_path} skeleton data has been saved to {output_file}")
-        # print(list(valid_frames_indices))
-    else:
-        with open(output_file, "w") as f:
-            pass  # 创建空文件
-        with open(invalid_file, "a") as f:
-            f.write(output_file + "\n")
-        logger.warning(f"{video_path} is invalid!")
+    #     logger.info(
+    #         f"{video_path} skeleton data has been saved to {output_file}")
+    #     # print(list(valid_frames_indices))
+    # else:
+    #     with open(output_file, "w") as f:
+    #         pass  # 创建空文件
+    #     with open(invalid_file, "a") as f:
+    #         f.write(output_file + "\n")
+    #     logger.warning(f"{video_path} is invalid!")
+
+    with open(output_file, "w") as f:
+        for frame in all_frames:
+            # 只保存左手、右手、肩部坐标，不包含其他信息
+            all_landmarks = frame.left_hand_3d + frame.right_hand_3d + frame.shoulders_3d
+            if all_landmarks:
+                for lm in all_landmarks:
+                    # 写入每个关键点的 x, y, z 坐标，保留10位小数，按照空格分隔
+                    f.write(f"{lm[0]:.10f} {lm[1]:.10f} {lm[2]:.10f} ")
+
+                # 每一帧按换行符分割
+                f.write("\n")
 
     return missing_hands_count, num_left, num_right
 
