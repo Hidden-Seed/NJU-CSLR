@@ -1,12 +1,14 @@
 import os
+import numpy as np
 
 import torch
+import torch.nn.functional as F
 
 from utils.data_process import *
 from utils.prediction import *
 
 
-def main_demo_0(config, logger):
+def main_demo_2(config, logger):
     # Read dict
     dict_path = config["demo"]["dictionary_path"]
     if not os.path.exists(dict_path):
@@ -29,10 +31,11 @@ def main_demo_0(config, logger):
     model.to(device)
 
     txt_data_dir = config["mp"]["save_path"]
-    total_num, success_num = (0, 0)
 
-    for label in range(1):
+    for label in range(10, 20):
         txt_data_path = os.path.join(txt_data_dir, f"{label:03d}")
+        diff_list = []
+
         for txt_data_file in os.listdir(txt_data_path):
 
             # Load txt data
@@ -43,8 +46,6 @@ def main_demo_0(config, logger):
             data = load_txt_data(txt_data_file, logger)
             if data is None:
                 continue
-            else:
-                total_num += 1
 
             # Process data
             data_array = process_txt_data(data, config["demo"])
@@ -53,18 +54,22 @@ def main_demo_0(config, logger):
                 data_array).to(device).unsqueeze(0))
 
             # Predict the result
-            pre_class = predict(data_tensor, model, logger)
+            with torch.no_grad():
+                prediction = model(data_tensor)
+                prob_vector = F.softmax(prediction[:, -1, :], dim=1)
+                prob_vector_np = prob_vector.cpu().numpy()[0]
 
-            pre_word = class_index2name(class_dict, pre_class)
-            real_word = class_index2name(class_dict, label)
-            logger.info(f"Prediction result: {pre_word}")
-            logger.info(f"Correct word     : {real_word}")
+            # 原始方差
+            var_full = np.var(prob_vector_np)
 
-            if pre_class == label:
-                logger.info("Predict successfully!")
-                success_num += 1
-            else:
-                logger.warning("Prediction failed!")
+            # 去掉最大值后
+            max_idx = np.argmax(prob_vector_np)
+            prob_vector_removed = np.delete(prob_vector_np, max_idx)
+            var_removed = np.var(prob_vector_removed)
 
-    success_rate = success_num / total_num
-    logger.info(f"Rate of successful prediction: {success_rate:.2%}")
+            diff = var_full - var_removed
+            diff_list.append(diff)
+
+        diff_mean = np.mean(diff_list)
+        word = class_index2name(class_dict, label)
+        logger.info(f"{label:03d}_{word}: {diff_mean}")

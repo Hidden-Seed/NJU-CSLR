@@ -15,3 +15,4 @@ python prediction.py --prediction_type local_$DEMO_INDEX
 # Demo_index
 # 0 - Simple prediction
 # 1 - Accuracy test
+# 2 - None words detection
