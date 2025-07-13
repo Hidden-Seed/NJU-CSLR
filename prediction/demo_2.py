@@ -31,8 +31,9 @@ def main_demo_2(config, logger):
     model.to(device)
 
     txt_data_dir = config["mp"]["save_path"]
+    diff_mean_list = []
 
-    for label in range(10, 20):
+    for label in range(500):
         txt_data_path = os.path.join(txt_data_dir, f"{label:03d}")
         diff_list = []
 
@@ -71,5 +72,8 @@ def main_demo_2(config, logger):
             diff_list.append(diff)
 
         diff_mean = np.mean(diff_list)
+        diff_mean_list.append(diff_mean)
         word = class_index2name(class_dict, label)
         logger.info(f"{label:03d}_{word}: {diff_mean}")
+
+    logger.info(f"{min(diff_mean_list)}")
