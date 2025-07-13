@@ -39,8 +39,7 @@ def main_demo_3(config, logger):
     # Process data
     data_array = process_txt_data(data, config["demo"])
     # Convert to a Tensor.
-    data_tensor = (torch.from_numpy(
-        data_array).to(device).unsqueeze(0))
+    data_tensor = torch.from_numpy(data_array).to(device).unsqueeze(0)
 
     # Predict the result
     with torch.no_grad():
@@ -56,5 +55,13 @@ def main_demo_3(config, logger):
     prob_vector_removed = np.delete(prob_vector_np, max_idx)
     var_removed = np.var(prob_vector_removed)
 
-    diff = var_full - var_removed
-    print(diff)
+    diff = float(var_full - var_removed)
+    diff_threshold = float(config["demo"]["diff_threshold"])
+    logger.info(f"Get diff: {diff}")
+
+    pred_class = int(max_idx)
+    word = class_index2name(class_dict, pred_class)
+    logger.info(f"Prediction result: {word}")
+
+    if diff <= diff_threshold:
+        logger.info("Invalid words!")
