@@ -30,8 +30,9 @@ def main_demo_0(config, logger):
 
     txt_data_dir = config["mp"]["save_path"]
     total_num, success_num = (0, 0)
+    word_indexes = read_word_list(config["data"]["word_list"])
 
-    for label in range(1):
+    for label in word_indexes:
         txt_data_path = os.path.join(txt_data_dir, f"{label:03d}")
         for txt_data_file in os.listdir(txt_data_path):
 
@@ -53,7 +54,8 @@ def main_demo_0(config, logger):
                 data_array).to(device).unsqueeze(0))
 
             # Predict the result
-            pre_class = predict(data_tensor, model, logger)
+            pre_class_tmp = predict(data_tensor, model, logger)
+            pre_class = word_indexes[pre_class_tmp]
 
             pre_word = class_index2name(class_dict, pre_class)
             real_word = class_index2name(class_dict, label)

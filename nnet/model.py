@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class model(nn.Module):
-    def __init__(self, OUTPUT_SIZE, DROP_RATE, INPUT_SIZE=[92, 256, 512], HIDDEN_SIZE=[64, 128, 64]):
+    def __init__(self, OUTPUT_SIZE, DROP_RATE, INPUT_SIZE=[84, 256, 512], HIDDEN_SIZE=[64, 128, 64]):
         super(model, self).__init__()
 
         # Dropout layer

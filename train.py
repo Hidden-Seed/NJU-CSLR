@@ -297,6 +297,7 @@ if __name__ == "__main__":
         int).sum()) / float(final_predict.size)
     logger.info(f"Test accuracy: {accuracy}")
 
-    record_model(config, input_size, hidden_size, output_size,
-                 batch_size, epoch, lr, time_step, drop_rate, layers,
-                 cpu_nums, accuracy, model_save_name)
+    if dist.get_rank() == 0:
+        record_model(config, input_size, hidden_size, output_size,
+                     batch_size, epoch, lr, time_step, drop_rate, layers,
+                     cpu_nums, accuracy, model_save_name)

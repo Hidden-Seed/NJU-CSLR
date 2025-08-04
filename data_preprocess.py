@@ -43,8 +43,10 @@ if __name__ == "__main__":
 
     data, label = [], []
     invalid_num = 0
+    word_indexes = read_word_list(config["data"]["word_list"])
+    word_labels = range(0, len(word_indexes))
 
-    for index in tqdm(range(0, 500), desc="Processing labels", colour="green"):
+    for tmp_idx, index in tqdm(enumerate(word_indexes), desc="Processing labels", colour="green"):
         label_idx = "%03d" % index
         label_dir = os.path.join(mat_data_dir, label_idx)
         # Keyframe data of all mats under a specific label
@@ -63,7 +65,7 @@ if __name__ == "__main__":
 
             # Flat append
             data.append(key_frames)
-            label.append(index)
+            label.append(tmp_idx)
 
         # label_data_array = np.array(label_data, dtype=np.float32)
         # data.append(label_data_array)

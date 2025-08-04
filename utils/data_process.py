@@ -163,3 +163,18 @@ def abs2rel(data, enable_3D, crop_size):
     data[0::2] = (data_x - x_min) / (x_max - x_min) * crop_size
     data[1::2] = (data_y - y_min) / (y_max - y_min) * crop_size
     return data
+
+
+# 读取词汇文件
+def read_word_list(list_path):
+    word_indexes = []
+    if list_path == "":
+        return range(0, 500)
+
+    with open(list_path, "r") as f:
+        for line in f:
+            line = line.strip()
+            if line:  # 忽略空行
+                word_indexes.append(int(line))
+
+    return word_indexes
