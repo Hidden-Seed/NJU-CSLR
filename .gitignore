@@ -32,6 +32,7 @@ Thumbs.db
 .ipynb_checkpoints/
 
 # Logs and temporary files
+log/
 *.log
 *.bak
 *.tmp

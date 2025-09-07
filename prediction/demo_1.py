@@ -35,6 +35,8 @@ def main_demo_1(config, logger):
     final_predict = []
     ground_truth = []
 
+    word_indexes = read_word_list(config["data"]["word_list"])
+
     for step, (b_x, b_y) in enumerate(dataloader):
         b_x = b_x.type(torch.FloatTensor).to(device)
         b_y = b_y.type(torch.long).to(device)
@@ -64,10 +66,11 @@ def main_demo_1(config, logger):
         correct = (final_predict[indices] == label).sum()
         accuracy = correct / total if total > 0 else 0.0
 
-        cur_word = class_dict.get(int(label), "unknown")
+        real_label = word_indexes[label]
+        cur_word = class_dict.get(int(real_label), "unknown")
 
         accuracy_list.append({
-            "label": int(label),
+            "label": int(real_label),
             "word": cur_word,
             "accuracy": accuracy
         })

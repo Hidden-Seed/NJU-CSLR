@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import DistributedSampler
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.utils.tensorboard import SummaryWriter
 
 from nnet.blstm import blstm
 from nnet.lstm import lstm
@@ -197,6 +198,12 @@ if __name__ == "__main__":
     train_loss, valid_loss = [], []
     min_valid_loss = np.inf
 
+    # tensorboard
+    log_dir = config["model"]["log_dir"]
+    tensorboard_dir = f"{log_dir}/tensorboard/loss_{time_str}"
+    os.makedirs(tensorboard_dir, exist_ok=True)
+    writer = SummaryWriter(log_dir=tensorboard_dir)
+
     # iterator = tqdm(range(epoch))
     for cur_epoch in range(epoch):
         total_train_loss = []
@@ -266,6 +273,9 @@ if __name__ == "__main__":
             "best_valid_loss: {:0.6f}, lr: {:0.7f}"
         ).format((cur_epoch + 1), epoch, train_loss[-1],
                  valid_loss[-1], min_valid_loss, optimizer.param_groups[0]["lr"])
+
+        writer.add_scalar("Loss/train", train_loss[-1], (cur_epoch + 1))
+        writer.add_scalar("Loss/valid", valid_loss[-1], (cur_epoch + 1))
 
         # Update learning rate
         mult_step_scheduler.step()

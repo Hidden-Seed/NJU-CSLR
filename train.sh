@@ -44,6 +44,7 @@ do
     echo "Running iteration $i"
 
     python data_split_shuffle.py
+    tensorboard --logdir=log/train_log/tensorboard > /dev/null 2>&1 & 
     torchrun --nproc_per_node=3 --nnodes=1 --rdzv_backend=c10d --max_restarts=3 train.py --train_iteration=$i
 
     echo "Iteration $i completed."
