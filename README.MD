@@ -1,14 +1,16 @@
-# Chinese Sign Language Recognition(CSLR)
+# Chinese Sign Language Recognition(NJU-CSLR)
 
 ## Project Introduction
 
++ This project belongs to Chinese Sign Language Recognition Research Group, School of Electronic Science and Engineering, **Nanjing University** and is intended for **non-commercial purposes only**, such as teaching and demonstration.
 + The members of this project:
     - **Project Leader**: Shijie Sun
     - **Team Members**: Chao Xu, Yuankai Lai
-    - **Supervisor**: Hongchen Zhan, Yi Chen, Yina Zhou
+    - **Supervisors**: Hongchen Zhan, Yi Chen, Yina Zhou
 + The goal of this project: **Chinese Isolated Sign Language Word Recognition based on PyTorch**;
 + The basic network structure: **Bi-LSTM** (Bidirectional Long Short-Term Memory Neural Network);
-+ The dataset: **500-CSL** provided by the University of Science and Technology of China ([500-class Chinese Sign Language Word Dataset](http://home.ustc.edu.cn/~pjh/openresources/cslr-dataset-2015/index.html)).
++ The dataset: **500-CSL** provided by the University of Science and Technology of China ([CSL & SLR500 Dataset | Visual Sign Language Research Group](https://ustc-slr.github.io/datasets/2015_csl/)).
++ This project references the following project: [harveyfly/SignLanguageRecognition: 中文孤立手语词识别；Bi-LSTM；SLR；500-CSL](https://github.com/harveyfly/SignLanguageRecognition)
 
 ## Environment configuration
 
@@ -25,66 +27,60 @@ $ pip install -r requirements.txt
 
 ```bash
 CSLR/
-├── config
-│   ├── dataset.cfg
-│   ├── __init__.py
-│   ├── model.cfg
-│   └── server.cfg
-├── CSLR_client.py
-├── CSLR_flask_server.py
-├── data_preprocess.py
+├── config                 # config files (model, dataset and etc.)
 ├── dataset
-│   └── dictionary.txt
-├── data_split_shuffle.py
-├── nnet
-│   ├── AutoEncoder.py
-│   ├── blstm.py
+│   └── dictionary.txt     # labels of dataset 
+├── nnet                   # neural networks
 │   ├── __init__.py
-│   └── lstm.py
+│   ├── blstm.py           # ai model based on blstm
+│   ├── lstm.py            # ai model based on lstm     
+│   └── model.py           # other models
+├── utils                  # necessary modules for data processing, training and etc.
+├── mp_hlt.py              # color_video to txt_file (mediapipe holistic)
+├── txt2mat.py             # txt_file to mat_data
+├── data_preprocess.py     # preprocess mat_data
+├── data_split_shuffle.py  # split and shuffle
+├── skeleton_viz.py        # visualize processed data
+├── train.py               # training for blstm/lstm
+├── train_model.py         # training for other models
+├── train.sh               # start training
+├── prediction             # several demos
+├── prediction.py          # test model with demos in prediction_dir
+├── run_demo.sh            # start prediction
 ├── README.MD
-├── requirements.txt
-├── train.py
-├── train.sh
-├── txt2mat.m
-└── utils
-    ├── data_config.py
-    ├── __init__.py
-    ├── keyframes.py
-    ├── logger.py
-    ├── plot_data.py
-    ├── server_config.py
-    ├── train_config.py
-    └── utils.py
+└── requirements.txt 
 ```
 
 ## Workflow
 
-### Download the dataset and convert it
-
-**Download**
-
-+ Use [harveyfly's dataset backup](https://pan.baidu.com/s/1lZasotYbZpsoCrilvT71VQ) (which has been converted to MAT files), extraction code: vswo.
-+ Apply to the USTC [500-class Chinese Sign Language Word Dataset](http://home.ustc.edu.cn/~pjh/openresources/cslr-dataset-2015/index.html).
-
-**Conversion**
-
-```bash
-$ # Modify the data path before running the it
-$ matlab -batch txt2mat.m
-```
-
 ### Modify the configuration files
 
 ```bash
-./config/
+config/
 ├── dataset.cfg  # Dataset configuration
 ├── model.cfg    # Model configuration
+├── mp.cfg       # Mediapipe holistic configuration
 └── server.cfg   # Server configuration (demo application)
 ```
+
+### Download the dataset and process it
+
+**Download**
+
++ Apply to the USTC [CSL & SLR500 Dataset | Visual Sign Language Research Group](https://ustc-slr.github.io/datasets/2015_csl/)
+
+**Process**
+
+```bash
+$ # Modify the data path before running the it
+$ python mp_hlt.py
+$ python txt2mat.py
+```
+
 ### Data process, train and test
 
 ```bash
-$ ./train.sh
+$ ./train.sh  # include preprocess & split_shuffle
 ```
 
 Training and testing results are recorded in the log file (`log/`), and will also be displayed on the terminal. The model files are saved in the `model/` folder.
@@ -92,9 +88,10 @@ Training and testing results are recorded in the log file (`log/`), and will als
 ### Run the demo application
 
 ```bash
-$ python CSLR_flask_server.py
-$ python CSLR_client.py
+$ ./run_demo.sh
 ```
+
+## Copyright
 
 Copyright © 2025 Chinese Sign Language Recognition Research Group, School of Electronic Science and Engineering, Nanjing University. All rights reserved.
 This project is intended for research and educational purposes only. Unauthorized use, reproduction, or distribution of this work is prohibited.

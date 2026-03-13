@@ -3,9 +3,11 @@ dataset/*
 *.npy
 *.zip
 *.mat
+*.json
 !dictionary.txt
 
 # Model
+model/
 *.pkl
 *.json
 
@@ -50,5 +52,5 @@ log/
 *.whl
 
 # Testing files 
+test/
 *_test.py
-test/*
